@@ -1,0 +1,204 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07110d">
+<meta name="description" content="GHK Password Checker — a browser-based password security education lab.">
+<title>GHK Password Checker | Cyber Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#07110d;--panel:#0d1b15;--line:#1d4932;--green:#39ff88;--muted:#a0b8aa}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#10291b,var(--bg) 65%);color:#ecfff2;font:16px system-ui,sans-serif;min-height:100vh}
+header{padding:28px 16px;text-align:center;border-bottom:1px solid var(--line)}
+.logo{font-size:12px;letter-spacing:4px;color:var(--green)}
+h1{font-size:clamp(27px,7vw,44px);margin:12px 0;text-shadow:0 0 20px #39ff8840}
+h1 span{color:var(--green)}
+header p,.muted{color:var(--muted);font-size:14px}
+main{max-width:950px;margin:24px auto;padding:0 14px 40px}
+.notice{border:1px solid #735b22;background:#241e0c;color:#f5dda0;border-radius:10px;padding:12px;font-size:13px;margin-bottom:18px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.tab,.action{border:1px solid var(--line);border-radius:9px;background:#0b1911;color:#d8f9e3;padding:12px 7px}
+.tab.active,.action{border-color:var(--green);color:var(--green)}
+.tab.active{background:#123421}
+.panel{display:none;background:#0b1711;border:1px solid var(--line);border-radius:14px;padding:clamp(15px,4vw,25px);box-shadow:0 0 30px #00ff5510}
+.panel.active{display:block}
+h2{margin-top:0;font-size:22px}
+label{display:block;margin:15px 0 7px;color:#c6e8d1;font-size:14px}
+input,textarea{width:100%;padding:13px;background:#050c08;color:#fff;border:1px solid #28553b;border-radius:8px;outline:none}
+input:focus,textarea:focus{border-color:var(--green)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.action{background:#10271a;padding:11px 15px}
+.action:hover,.tab:hover{box-shadow:0 0 12px #39ff8830}
+.result{margin-top:16px;padding:15px;border:1px solid var(--line);border-radius:9px;overflow-wrap:anywhere}
+.meter{height:8px;background:#203329;border-radius:9px;margin:12px 0;overflow:hidden}
+.meter div{height:100%;width:0;background:var(--green);transition:width .2s}
+.good{color:var(--green)}.bad{color:#ffb3a8}
+ul{padding-left:22px;line-height:1.8}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+td,th{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.small{font-size:12px;color:var(--muted)}
+@media(max-width:480px){.tabs{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">[ GHK CYBER LAB ]</div>
+<h1>GHK <span>Password Checker</span></h1>
+<p>Understand passwords. Explore hashes. Learn security.</p>
+</header>
+<main>
+<div class="notice">Privacy first: password checks and hashing run in this browser. Never enter a real account password. This educational page does not send your input to a server.</div>
+
+<nav class="tabs" aria-label="Tools">
+<button class="tab active" data-tab="strength">01 Strength</button>
+<button class="tab" data-tab="hash">02 Hash lab</button>
+<button class="tab" data-tab="sim">03 Simulator</button>
+<button class="tab" data-tab="report">04 Reports</button>
+</nav>
+
+<section class="panel active" id="strength">
+<h2>Password strength checker</h2>
+<p class="muted">Use a made-up test password. This is a basic educational estimate, not a guarantee against guessing.</p>
+<label for="pw">Test password</label>
+<div class="actions"><input id="pw" type="password" placeholder="Enter a dummy password" autocomplete="off"><button class="action" id="togglePw">Show</button></div>
+<div class="meter"><div id="meterFill"></div></div>
+<div id="strengthResult" aria-live="polite" class="result">Your result will appear here.</div>
+<div class="actions"><button class="action" id="analyze">Analyze password</button></div>
+<div id="tips" class="muted"></div>
+</section>
+
+<section class="panel" id="hash">
+<h2>SHA-256 hash lab</h2>
+<p class="muted">SHA-256 creates a 256-bit digest. It is not encryption and is not suitable by itself for storing user passwords.</p>
+<label for="hashInput">Dummy test text</label>
+<input id="hashInput" type="password" autocomplete="off" placeholder="Enter test text">
+<div class="actions"><button class="action" id="hashToggle">Show</button><button class="action" id="makeHash">Generate SHA-256</button></div>
+<div class="result" id="hashResult" aria-live="polite">Your digest will appear here.</div>
+</section>
+
+<section class="panel" id="sim">
+<h2>Controlled password-guessing lab</h2>
+<p class="muted">This simulator compares a dummy target with a small, fixed list of candidates. It never contacts accounts or external systems.</p>
+<label for="target">Dummy target password</label>
+<input id="target" type="password" autocomplete="off" placeholder="Try: hello123">
+<div class="actions"><button class="action" id="targetToggle">Show</button></div>
+<label>Simulation mode</label>
+<div class="actions">
+<button class="action" id="dictionary">Dictionary demo</button>
+<button class="action" id="brute">Small brute-force demo</button>
+</div>
+<div class="result" id="simResult" aria-live="polite">Experiment results will appear here.</div>
+</section>
+
+<section class="panel" id="report">
+<h2>Experiment reports</h2>
+<p class="muted">Reports are kept in this page's memory until you export them. Nothing is uploaded or saved to a server.</p>
+<div class="actions"><button class="action" id="export">Export CSV</button><button class="action" id="clear">Clear report</button></div>
+<div id="reportTable" class="result">No experiments recorded yet.</div>
+</section>
+</main>
+<footer>GHK Password Checker · Educational cybersecurity project · Use dummy data only</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const records=[];
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));
+ document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));
+}));
+[["togglePw","pw"],["hashToggle","hashInput"],["targetToggle","target"]].forEach(([bid,iid])=>{
+ $(bid).onclick=()=>{const e=$(iid);e.type=e.type==="password"?"text":"password";$(bid).textContent=e.type==="password"?"Show":"Hide";};
+});
+function rate(p){
+ let score=0;
+ if(p.length>=8)score++;
+ if(p.length>=12)score++;
+ if(p.length>=16)score++;
+ if(/[a-z]/.test(p)&&/[A-Z]/.test(p))score++;
+ if(/\d/.test(p))score++;
+ if(/[^A-Za-z0-9]/.test(p))score++;
+ if(p.length<8)score=Math.min(score,1);
+ const names=["Very weak","Weak","Fair","Good","Strong","Strong","Very strong"];
+ return {score,name:!p?"No input":p.length<8&&score<2?"Weak":score<2?"Weak":score<3?"Fair":score<4?"Good":score<6?"Strong":"Very strong"};
+}
+function record(kind,attempts,seconds,result){
+ records.push({date:new Date().toISOString(),kind,attempts,seconds:seconds.toFixed(6),result});
+ renderReport();
+}
+$("analyze").onclick=()=>{
+ const p=$("pw").value;
+ if(!p){$("strengthResult").textContent="Enter a dummy password first.";return;}
+ const r=rate(p),pct=Math.min(100,r.score/6*100);
+ $("meterFill").style.width=pct+"%";
+ $("strengthResult").innerHTML="<b>"+escapeHTML(r.name)+"</b><br>Length: "+p.length+" characters<br>Character variety is only a rough signal.";
+ const tips=[];
+ if(p.length<16)tips.push("Consider a longer passphrase.");
+ if(!/[a-z]/.test(p)||!/[A-Z]/.test(p))tips.push("Consider mixed letter case.");
+ if(!/\d/.test(p))tips.push("Consider including numbers.");
+ if(!/[^A-Za-z0-9]/.test(p))tips.push("Consider symbols if practical.");
+ tips.push("Avoid reused passwords and predictable patterns.");
+ $("tips").innerHTML="<ul>"+tips.map(t=>"<li>"+escapeHTML(t)+"</li>").join("")+"</ul>";
+};
+$("makeHash").onclick=async()=>{
+ const p=$("hashInput").value;
+ if(!p){$("hashResult").textContent="Enter dummy text first.";return;}
+ if(!crypto.subtle){$("hashResult").textContent="Web Crypto needs a secure context (HTTPS).";return;}
+ const bytes=new TextEncoder().encode(p);
+ const digest=await crypto.subtle.digest("SHA-256",bytes);
+ const hex=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
+ $("hashResult").innerHTML="<b>SHA-256 digest</b><br><code>"+hex+"</code><br><br>Length: 64 hexadecimal characters";
+};
+const candidates=["hello","password","hello123","CyberLab2026!","test123","cat","demo123"];
+async function sha(s){const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(d),b=>b.toString(16).padStart(2,"0")).join("");}
+async function runDictionary(){
+ const target=$("target").value;
+ if(!target){$("simResult").textContent="Enter a dummy target first.";return;}
+ const t=performance.now(),h=await sha(target);let attempts=0,found=false;
+ for(const c of candidates){attempts++;if(await sha(c)===h){found=true;break;}}
+ const secs=(performance.now()-t)/1000,res=found?"Match found in lab list":"No match in lab list";
+ $("simResult").innerHTML=escapeHTML(res)+"<br>Attempts: "+attempts+"<br>Elapsed: "+secs.toFixed(6)+" seconds";
+ record("Dictionary demo",attempts,secs,res);
+}
+async function runBrute(){
+ const target=$("target").value;
+ if(!target){$("simResult").textContent="Enter a dummy target first.";return;}
+ if(!/^[a-z]{1,2}$/.test(target)){
+  $("simResult").textContent="For this bounded demo, use a dummy target of one or two lowercase letters (a–z).";
+  return;
+ }
+ const t=performance.now(),h=await sha(target);let attempts=0,found=false;
+ outer:for(let n=1;n<=2;n++){
+  for(let a=0;a<26**n;a++){
+   let x=a,c="";
+   for(let j=0;j<n;j++){c=String.fromCharCode(97+x%26)+c;x=Math.floor(x/26);}
+   attempts++;if(await sha(c)===h){found=true;break outer;}
+  }
+ }
+ const secs=(performance.now()-t)/1000,res=found?"Match found in bounded search":"No match";
+ $("simResult").innerHTML=escapeHTML(res)+"<br>Attempts: "+attempts+"<br>Elapsed: "+secs.toFixed(6)+" seconds";
+ record("Bounded brute-force demo",attempts,secs,res);
+}
+$("dictionary").onclick=runDictionary;
+$("brute").onclick=runBrute;
+function renderReport(){
+ if(!records.length){$("reportTable").textContent="No experiments recorded yet.";return;}
+ $("reportTable").innerHTML="<table><thead><tr><th>Experiment</th><th>Attempts</th><th>Seconds</th><th>Result</th></tr></thead><tbody>"+records.map(r=>"<tr><td>"+escapeHTML(r.kind)+"</td><td>"+r.attempts+"</td><td>"+r.seconds+"</td><td>"+escapeHTML(r.result)+"</td></tr>").join("")+"</tbody></table><p class='small'>"+records.length+" experiment(s) · Export CSV to keep a copy.</p>";
+}
+$("export").onclick=()=>{
+ if(!records.length){alert("Run an experiment first.");return;}
+ const rows=[["Date","Experiment","Attempts","ElapsedSeconds","Result"],...records.map(r=>[r.date,r.kind,r.attempts,r.seconds,r.result])];
+ const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const a=document.createElement("a"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+ a.href=url;a.download="ghk-security-report.csv";a.click();URL.revokeObjectURL(url);
+};
+$("clear").onclick=()=>{if(confirm("Clear all report rows from this page?")){records.length=0;renderReport();}};
+</script>
+</body>
+</html>
+EOF
