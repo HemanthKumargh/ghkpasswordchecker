@@ -1,204 +1,500 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07110d">
-<meta name="description" content="GHK Password Checker — a browser-based password security education lab.">
-<title>GHK Password Checker | Cyber Lab</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050907">
+<meta name="description" content="GHK Cyber Lab — learn password security and SHA-256 using safe, local experiments.">
+<title>GHK Cyber Lab | Password Security</title>
 <style>
-:root{color-scheme:dark;--bg:#07110d;--panel:#0d1b15;--line:#1d4932;--green:#39ff88;--muted:#a0b8aa}
+:root{
+  --bg:#050907;--panel:#0b120e;--panel2:#0e1812;
+  --green:#55ff91;--green2:#18c964;--muted:#93a99a;
+  --line:#1c3828;--white:#eaffef;--red:#ff657a;--yellow:#ffd166;
+  --radius:18px;--shadow:0 0 30px #20ff6810;
+}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#10291b,var(--bg) 65%);color:#ecfff2;font:16px system-ui,sans-serif;min-height:100vh}
-header{padding:28px 16px;text-align:center;border-bottom:1px solid var(--line)}
-.logo{font-size:12px;letter-spacing:4px;color:var(--green)}
-h1{font-size:clamp(27px,7vw,44px);margin:12px 0;text-shadow:0 0 20px #39ff8840}
-h1 span{color:var(--green)}
-header p,.muted{color:var(--muted);font-size:14px}
-main{max-width:950px;margin:24px auto;padding:0 14px 40px}
-.notice{border:1px solid #735b22;background:#241e0c;color:#f5dda0;border-radius:10px;padding:12px;font-size:13px;margin-bottom:18px}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{
+  margin:0;background:
+  radial-gradient(ellipse at 80% 0%,#12351f55,transparent 40%),
+  radial-gradient(ellipse at 0% 35%,#0a291a44,transparent 38%),var(--bg);
+  color:var(--white);font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.12;
+  background-image:linear-gradient(#55ff9110 1px,transparent 1px),
+  linear-gradient(90deg,#55ff9110 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%);
+}
 button,input,textarea{font:inherit}
 button{cursor:pointer}
-.tab,.action{border:1px solid var(--line);border-radius:9px;background:#0b1911;color:#d8f9e3;padding:12px 7px}
-.tab.active,.action{border-color:var(--green);color:var(--green)}
-.tab.active{background:#123421}
-.panel{display:none;background:#0b1711;border:1px solid var(--line);border-radius:14px;padding:clamp(15px,4vw,25px);box-shadow:0 0 30px #00ff5510}
-.panel.active{display:block}
-h2{margin-top:0;font-size:22px}
-label{display:block;margin:15px 0 7px;color:#c6e8d1;font-size:14px}
-input,textarea{width:100%;padding:13px;background:#050c08;color:#fff;border:1px solid #28553b;border-radius:8px;outline:none}
-input:focus,textarea:focus{border-color:var(--green)}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{width:min(1120px,92%);margin:auto}
+.topbar{
+  position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);
+  background:#050907e8;border-bottom:1px solid var(--line);
+}
+.nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:1.5px}
+.logo{
+  width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--green);
+  color:var(--green);border-radius:10px;box-shadow:0 0 18px #55ff9128;font-weight:900;
+}
+.navlinks{display:flex;gap:8px;flex-wrap:wrap}
+.navlinks a{color:var(--muted);font-size:13px;padding:8px 10px;border-radius:8px}
+.navlinks a:hover{background:#102319;color:var(--green);text-decoration:none}
+.hero{padding:58px 0 32px;display:grid;grid-template-columns:1.5fr 1fr;gap:30px;align-items:center}
+.eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:2.4px;text-transform:uppercase}
+h1{font-size:clamp(36px,6vw,66px);line-height:1.03;letter-spacing:-2px;margin:12px 0 18px}
+h1 span{color:var(--green);text-shadow:0 0 30px #55ff9130}
+.lead{color:#a9bdb0;font-size:17px;max-width:600px}
+.notice{border:1px solid #2d6844;background:#0b1b11;padding:13px 15px;border-radius:12px;color:#c5f4d1;font-size:13px;margin-top:22px}
+.notice strong{color:var(--green)}
+.hero-card,.card,.stat,.about-box{
+  border:1px solid var(--line);border-radius:var(--radius);
+  background:linear-gradient(145deg,#0e1912ee,#080e0b);box-shadow:var(--shadow);
+}
+.hero-card{padding:24px;position:relative;overflow:hidden}
+.hero-card:after{content:"";position:absolute;width:150px;height:150px;right:-65px;top:-70px;border-radius:50%;border:1px solid #55ff9133;box-shadow:0 0 0 20px #55ff9108,0 0 0 40px #55ff9105}
+.orb{height:110px;width:110px;border-radius:50%;margin:4px auto 20px;border:1px solid var(--green);display:grid;place-items:center;color:var(--green);font-size:36px;box-shadow:0 0 25px #55ff9120,inset 0 0 25px #55ff9115;animation:pulse 3s ease-in-out infinite}
+.terminal{font:12px/1.9 ui-monospace,SFMono-Regular,monospace;color:var(--muted)}
+.terminal span{color:var(--green)}
+@keyframes pulse{0%,100%{box-shadow:0 0 15px #55ff9120,inset 0 0 18px #55ff9110}50%{box-shadow:0 0 35px #55ff9140,inset 0 0 30px #55ff9120}}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 38px}
+.stat{padding:16px 18px;animation:rise .6s both}
+.stat:nth-child(2){animation-delay:.1s}.stat:nth-child(3){animation-delay:.2s}
+.stat strong{display:block;color:var(--green);font-size:25px}
+.stat small{color:var(--muted)}
+.section{padding:22px 0 34px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:18px}
+.section h2{margin:0;font-size:clamp(23px,3vw,32px);letter-spacing:-.6px}
+.sub{color:var(--muted);margin:6px 0 0}
+.tag{font-size:11px;letter-spacing:1px;border:1px solid #245738;color:var(--green);border-radius:99px;padding:5px 9px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{padding:22px;min-width:0;transition:transform .2s,border-color .2s}
+.card:hover{border-color:#36734c;transform:translateY(-2px)}
+.card h3{margin:0 0 6px;font-size:19px}
+.card p{color:var(--muted);font-size:13px;margin:0 0 16px}
+.field-label{display:block;font-size:12px;color:#bdd1c2;margin:13px 0 7px}
+input,textarea{
+  width:100%;background:#050a07;border:1px solid #25412f;color:var(--white);
+  padding:12px 13px;border-radius:10px;outline:none;min-width:0;
+}
+input:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px #55ff9114}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-.action{background:#10271a;padding:11px 15px}
-.action:hover,.tab:hover{box-shadow:0 0 12px #39ff8830}
-.result{margin-top:16px;padding:15px;border:1px solid var(--line);border-radius:9px;overflow-wrap:anywhere}
-.meter{height:8px;background:#203329;border-radius:9px;margin:12px 0;overflow:hidden}
-.meter div{height:100%;width:0;background:var(--green);transition:width .2s}
-.good{color:var(--green)}.bad{color:#ffb3a8}
-ul{padding-left:22px;line-height:1.8}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
-td,th{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
-.small{font-size:12px;color:var(--muted)}
-@media(max-width:480px){.tabs{grid-template-columns:repeat(2,1fr)}}
+.btn{border:1px solid #286440;background:#102419;color:var(--green);padding:10px 14px;border-radius:10px;font-weight:750;font-size:13px;transition:.2s}
+.btn:hover{background:#173a25;border-color:var(--green);transform:translateY(-1px)}
+.btn.primary{background:var(--green);color:#041108;border-color:var(--green)}
+.btn.primary:hover{background:#9affbb}
+.btn.secondary{background:transparent;color:#c2d3c7;border-color:#294333}
+.btn.danger{color:#ff9baa;border-color:#64313a;background:#1b0d10}
+.result{margin-top:15px;padding:14px;border-radius:12px;background:#050a07;border:1px solid #203c2a;overflow-wrap:anywhere}
+.result strong{color:var(--green)}
+.meter{height:8px;background:#1a2a20;border-radius:99px;overflow:hidden;margin:12px 0}
+.meter-fill{height:100%;width:0;background:var(--green);transition:width .35s}
+.muted{color:var(--muted);font-size:12px}
+.digest{font:12px/1.7 ui-monospace,monospace;overflow-wrap:anywhere;word-break:break-word;color:#b7ffc9}
+.report-list{display:grid;gap:8px;margin-top:15px}
+.report-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:8px 0;font-size:13px}
+.report-row span:last-child{color:var(--green);text-align:right}
+.about-box{padding:23px}
+.about-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.about-item{background:#07100a;border:1px solid var(--line);border-radius:12px;padding:14px}
+.about-item strong{display:block;color:var(--green);margin-bottom:4px}
+footer{border-top:1px solid var(--line);margin-top:35px;padding:25px 0 35px;color:var(--muted);font-size:12px}
+.footer-row{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;background:#102419;border:1px solid var(--green);padding:10px 16px;border-radius:10px;color:var(--green);display:none;max-width:90%;box-shadow:0 8px 30px #0008}
+@media(max-width:760px){
+ .hero{grid-template-columns:1fr;padding-top:38px}.hero-card{display:none}
+ .stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:span 2}
+ .grid{grid-template-columns:1fr}.nav{padding:12px 0;align-items:flex-start;flex-direction:column}
+ .navlinks{gap:3px}.navlinks a{padding:6px 8px}.about-grid{grid-template-columns:1fr}
+ .section-head{align-items:flex-start;flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<header>
-<div class="logo">[ GHK CYBER LAB ]</div>
-<h1>GHK <span>Password Checker</span></h1>
-<p>Understand passwords. Explore hashes. Learn security.</p>
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="#home" aria-label="GHK Cyber Lab home"><span class="logo">G</span><span>GHK <span style="color:var(--green)">CYBER LAB</span></span></a>
+    <nav class="navlinks" aria-label="Main navigation">
+      <a href="#strength">Strength</a><a href="#hash">Hash lab</a>
+      <a href="#simulator">Simulator</a><a href="#reports">Reports</a><a href="#about">About</a>
+    </nav>
+  </div>
 </header>
-<main>
-<div class="notice">Privacy first: password checks and hashing run in this browser. Never enter a real account password. This educational page does not send your input to a server.</div>
 
-<nav class="tabs" aria-label="Tools">
-<button class="tab active" data-tab="strength">01 Strength</button>
-<button class="tab" data-tab="hash">02 Hash lab</button>
-<button class="tab" data-tab="sim">03 Simulator</button>
-<button class="tab" data-tab="report">04 Reports</button>
-</nav>
+<main class="wrap" id="home">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">● Educational security environment / v2.0</div>
+      <h1>Explore security.<br><span>Think like a defender.</span></h1>
+      <p class="lead">A hands-on cyber lab to understand password strength, cryptographic hashes, and safe guessing simulations — without connecting to real accounts.</p>
+      <div class="notice"><strong>PRIVACY FIRST</strong> — Your inputs are processed in this browser. Use made-up test data only. Never enter a real password.</div>
+    </div>
+    <div class="hero-card">
+      <div class="orb">⌘</div>
+      <div class="terminal"><span>GHK://</span> cyber-lab status</div>
+      <div class="terminal">[<span>ONLINE</span>] Browser-side experiments</div>
+      <div class="terminal">[<span>LOCAL</span>] No server submission</div>
+      <div class="terminal">[<span>READY</span>] Learning mode enabled_</div>
+    </div>
+  </section>
 
-<section class="panel active" id="strength">
-<h2>Password strength checker</h2>
-<p class="muted">Use a made-up test password. This is a basic educational estimate, not a guarantee against guessing.</p>
-<label for="pw">Test password</label>
-<div class="actions"><input id="pw" type="password" placeholder="Enter a dummy password" autocomplete="off"><button class="action" id="togglePw">Show</button></div>
-<div class="meter"><div id="meterFill"></div></div>
-<div id="strengthResult" aria-live="polite" class="result">Your result will appear here.</div>
-<div class="actions"><button class="action" id="analyze">Analyze password</button></div>
-<div id="tips" class="muted"></div>
+  <section class="stats" aria-label="Dashboard overview">
+    <div class="stat"><strong>04</strong><small>Learning modules</small></div>
+    <div class="stat"><strong id="reportCount">00</strong><small>Experiments this session</small></div>
+    <div class="stat"><strong>LOCAL</strong><small>Browser-side processing</small></div>
+  </section>
+
+  <section class="section" id="strength">
+    <div class="section-head"><div><div class="eyebrow">Module 01 / Evaluate</div><h2>Password strength checker</h2><p class="sub">Estimate strength and see ways to improve a test password.</p></div><span class="tag">DEFENSIVE LEARNING</span></div>
+    <div class="card">
+      <h3>Strength analysis</h3>
+      <p>This educational estimate checks length and character variety. It is not a guarantee against guessing.</p>
+      <label class="field-label" for="password">Dummy test password</label>
+      <input id="password" type="password" autocomplete="off" placeholder="Enter a made-up password">
+      <div class="actions"><button class="btn secondary" id="togglePassword" type="button">Show</button><button class="btn primary" id="analyze" type="button">Analyze password ↗</button></div>
+      <div class="result" id="strengthResult" aria-live="polite">Your analysis will appear here.</div>
+      <div class="meter"><div class="meter-fill" id="strengthFill"></div></div>
+      <div class="muted">Tip: use a long, unique passphrase. A password manager helps you avoid reusing passwords.</div>
+    </div>
+  </section>
+
+  <section class="section" id="hash">
+    <div class="section-head"><div><div class="eyebrow">Module 02 / Transform</div><h2>SHA-256 hash lab</h2><p class="sub">Explore how a one-way cryptographic digest is generated.</p></div><span class="tag">WEB CRYPTO API</span></div>
+    <div class="card">
+      <h3>Generate a digest</h3>
+      <p>SHA-256 is hashing, not encryption. It should not be used alone to store account passwords.</p>
+      <label class="field-label" for="hashInput">Dummy text to hash</label>
+      <textarea id="hashInput" rows="3" placeholder="Type sample text here"></textarea>
+      <div class="actions"><button class="btn primary" id="makeHash" type="button">Generate SHA-256 ↗</button><button class="btn secondary" id="copyHash" type="button" disabled>Copy digest</button></div>
+      <div class="result" id="hashResult" aria-live="polite">Your digest will appear here.</div>
+    </div>
+  </section>
+
+  <section class="section" id="simulator">
+    <div class="section-head"><div><div class="eyebrow">Module 03 / Simulate</div><h2>Controlled guessing lab</h2><p class="sub">A deliberately tiny, local-only demonstration using a fixed candidate list.</p></div><span class="tag">BOUNDED DEMO</span></div>
+    <div class="card">
+      <h3>Run a safe simulation</h3>
+      <p>Enter a made-up target. The simulator only compares against local candidates; it never contacts accounts, networks, or external systems.</p>
+      <label class="field-label" for="target">Dummy target password</label>
+      <input id="target" type="password" autocomplete="off" placeholder="Try: hello123">
+      <div class="actions"><button class="btn secondary" id="toggleTarget" type="button">Show</button></div>
+      <label class="field-label" for="mode">Simulation mode</label>
+      <select id="mode" style="width:100%;background:#050a07;color:var(--white);border:1px solid #25412f;border-radius:10px;padding:12px">
+        <option value="dictionary">Fixed dictionary demo</option>
+        <option value="brute">Tiny brute-force demo (max 2 characters)</option>
+      </select>
+      <div class="actions"><button class="btn primary" id="runSimulation" type="button">Run simulation ↗</button></div>
+      <div class="result" id="simResult" aria-live="polite">Simulation results will appear here.</div>
+      <p class="muted">Brute-force mode is capped at two characters from a small alphabet. This is a learning toy, not a real password-auditing tool.</p>
+    </div>
+  </section>
+
+  <section class="section" id="reports">
+
+<section id="mobile-security-lab">
+  <h2>GHK Mobile Lock Security Lab</h2>
+  <p>
+    Simulation only. This does not connect to or unlock a real phone.
+  </p>
+
+  <div class="mobile-lab-card">
+    <h3>Simulated Android Lock</h3>
+    <p id="labStatus">Ready to test</p>
+
+    <label for="labPin">Test PIN (dummy data only)</label>
+    <input
+      id="labPin"
+      type="password"
+      inputmode="numeric"
+      maxlength="6"
+      placeholder="Enter a 4–6 digit test PIN"
+    />
+
+    <button type="button" id="labStart">Test PIN</button>
+    <button type="button" id="labReset">Reset</button>
+
+    <p>Attempts: <span id="labAttempts">0</span></p>
+    <p>Elapsed: <span id="labTime">0.0</span> seconds</p>
+
+    <progress id="labProgress" value="0" max="100"></progress>
+    <p id="labResult" aria-live="polite">
+      Waiting to start
+    </p>
+  </div>
 </section>
 
-<section class="panel" id="hash">
-<h2>SHA-256 hash lab</h2>
-<p class="muted">SHA-256 creates a 256-bit digest. It is not encryption and is not suitable by itself for storing user passwords.</p>
-<label for="hashInput">Dummy test text</label>
-<input id="hashInput" type="password" autocomplete="off" placeholder="Enter test text">
-<div class="actions"><button class="action" id="hashToggle">Show</button><button class="action" id="makeHash">Generate SHA-256</button></div>
-<div class="result" id="hashResult" aria-live="polite">Your digest will appear here.</div>
-</section>
+    <div class="section-head"><div><div class="eyebrow">Module 04 / Record</div><h2>Experiment reports</h2><p class="sub">Review this session's experiments and export a CSV for your lab notes.</p></div><span class="tag">SESSION MEMORY ONLY</span></div>
+    <div class="card">
+      <h3>Lab activity</h3>
+      <p>Reports stay in page memory and are cleared when the page is refreshed or closed. Export before leaving if you want a copy.</p>
+      <div class="actions"><button class="btn primary" id="exportCsv" type="button">Export CSV ↓</button><button class="btn danger" id="clearReports" type="button">Clear reports</button></div>
+      <div id="reportList" class="report-list">No experiments recorded yet.</div>
+    </div>
+  </section>
 
-<section class="panel" id="sim">
-<h2>Controlled password-guessing lab</h2>
-<p class="muted">This simulator compares a dummy target with a small, fixed list of candidates. It never contacts accounts or external systems.</p>
-<label for="target">Dummy target password</label>
-<input id="target" type="password" autocomplete="off" placeholder="Try: hello123">
-<div class="actions"><button class="action" id="targetToggle">Show</button></div>
-<label>Simulation mode</label>
-<div class="actions">
-<button class="action" id="dictionary">Dictionary demo</button>
-<button class="action" id="brute">Small brute-force demo</button>
-</div>
-<div class="result" id="simResult" aria-live="polite">Experiment results will appear here.</div>
-</section>
-
-<section class="panel" id="report">
-<h2>Experiment reports</h2>
-<p class="muted">Reports are kept in this page's memory until you export them. Nothing is uploaded or saved to a server.</p>
-<div class="actions"><button class="action" id="export">Export CSV</button><button class="action" id="clear">Clear report</button></div>
-<div id="reportTable" class="result">No experiments recorded yet.</div>
-</section>
+  <section class="section" id="about">
+    <div class="section-head"><div><div class="eyebrow">About / Mission</div><h2>Learn. Test. Defend.</h2><p class="sub">Built for cybersecurity learning and safe experimentation.</p></div><span class="tag">GHK PROJECT</span></div>
+    <div class="about-box">
+      <p class="sub">GHK Cyber Lab is an educational project that demonstrates basic password-strength signals, SHA-256 hashing, and the limits of small candidate-guessing exercises.</p>
+      <div class="about-grid">
+        <div class="about-item"><strong>Privacy-minded</strong><span class="muted">Inputs are processed locally in the browser. No form sends data to a server.</span></div>
+        <div class="about-item"><strong>Safe by design</strong><span class="muted">The simulator uses a fixed list and a strictly limited character search.</span></div>
+        <div class="about-item"><strong>Learn responsibly</strong><span class="muted">Use only dummy data and practice only on systems you own or are authorized to test.</span></div>
+      </div>
+    </div>
+  </section>
 </main>
-<footer>GHK Password Checker · Educational cybersecurity project · Use dummy data only</footer>
+
+<footer><div class="wrap footer-row"><span>© <span id="year"></span> GHK Cyber Lab · Educational cybersecurity project</span><span>Use dummy data only · Built for learning</span></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
 "use strict";
-const $=id=>document.getElementById(id);
-const records=[];
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
- document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));
- document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));
-}));
-[["togglePw","pw"],["hashToggle","hashInput"],["targetToggle","target"]].forEach(([bid,iid])=>{
- $(bid).onclick=()=>{const e=$(iid);e.type=e.type==="password"?"text":"password";$(bid).textContent=e.type==="password"?"Show":"Hide";};
+const $ = id => document.getElementById(id);
+const reports = [];
+let latestDigest = "";
+
+function toast(message){
+  const el = $("toast");
+  el.textContent = message;
+  el.style.display = "block";
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.style.display = "none", 2400);
+}
+function record(type, details, result){
+  reports.unshift({time:new Date().toISOString(),type,details,result});
+  renderReports();
+}
+function renderReports(){
+  $("reportCount").textContent = String(reports.length).padStart(2,"0");
+  const list = $("reportList");
+  if(!reports.length){list.textContent = "No experiments recorded yet.";return;}
+  list.replaceChildren();
+  reports.slice(0,12).forEach(r=>{
+    const row = document.createElement("div");
+    row.className = "report-row";
+    const left = document.createElement("span");
+    left.textContent = new Date(r.time).toLocaleTimeString() + " · " + r.type;
+    const right = document.createElement("span");
+    right.textContent = r.result;
+    row.append(left,right);list.append(row);
+  });
+}
+function csvCell(value){
+  return '"' + String(value ?? "").replace(/"/g,'""') + '"';
+}
+function exportCSV(){
+  if(!reports.length){toast("No reports to export yet.");return;}
+  const rows = [["Timestamp","Experiment","Details","Result"],
+    ...reports.map(r=>[r.time,r.type,r.details,r.result])];
+  const csv = rows.map(row=>row.map(csvCell).join(",")).join("\r\n");
+  const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;a.download = "ghk-cyber-lab-reports.csv";
+  document.body.append(a);a.click();a.remove();URL.revokeObjectURL(url);
+  toast("CSV export started.");
+}
+$("year").textContent = new Date().getFullYear();
+$("togglePassword").addEventListener("click",()=>{
+  const input=$("password");
+  input.type=input.type==="password"?"text":"password";
+  $("togglePassword").textContent=input.type==="password"?"Show":"Hide";
 });
-function rate(p){
- let score=0;
- if(p.length>=8)score++;
- if(p.length>=12)score++;
- if(p.length>=16)score++;
- if(/[a-z]/.test(p)&&/[A-Z]/.test(p))score++;
- if(/\d/.test(p))score++;
- if(/[^A-Za-z0-9]/.test(p))score++;
- if(p.length<8)score=Math.min(score,1);
- const names=["Very weak","Weak","Fair","Good","Strong","Strong","Very strong"];
- return {score,name:!p?"No input":p.length<8&&score<2?"Weak":score<2?"Weak":score<3?"Fair":score<4?"Good":score<6?"Strong":"Very strong"};
-}
-function record(kind,attempts,seconds,result){
- records.push({date:new Date().toISOString(),kind,attempts,seconds:seconds.toFixed(6),result});
- renderReport();
-}
-$("analyze").onclick=()=>{
- const p=$("pw").value;
- if(!p){$("strengthResult").textContent="Enter a dummy password first.";return;}
- const r=rate(p),pct=Math.min(100,r.score/6*100);
- $("meterFill").style.width=pct+"%";
- $("strengthResult").innerHTML="<b>"+escapeHTML(r.name)+"</b><br>Length: "+p.length+" characters<br>Character variety is only a rough signal.";
- const tips=[];
- if(p.length<16)tips.push("Consider a longer passphrase.");
- if(!/[a-z]/.test(p)||!/[A-Z]/.test(p))tips.push("Consider mixed letter case.");
- if(!/\d/.test(p))tips.push("Consider including numbers.");
- if(!/[^A-Za-z0-9]/.test(p))tips.push("Consider symbols if practical.");
- tips.push("Avoid reused passwords and predictable patterns.");
- $("tips").innerHTML="<ul>"+tips.map(t=>"<li>"+escapeHTML(t)+"</li>").join("")+"</ul>";
-};
-$("makeHash").onclick=async()=>{
- const p=$("hashInput").value;
- if(!p){$("hashResult").textContent="Enter dummy text first.";return;}
- if(!crypto.subtle){$("hashResult").textContent="Web Crypto needs a secure context (HTTPS).";return;}
- const bytes=new TextEncoder().encode(p);
- const digest=await crypto.subtle.digest("SHA-256",bytes);
- const hex=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
- $("hashResult").innerHTML="<b>SHA-256 digest</b><br><code>"+hex+"</code><br><br>Length: 64 hexadecimal characters";
-};
-const candidates=["hello","password","hello123","CyberLab2026!","test123","cat","demo123"];
-async function sha(s){const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(d),b=>b.toString(16).padStart(2,"0")).join("");}
-async function runDictionary(){
- const target=$("target").value;
- if(!target){$("simResult").textContent="Enter a dummy target first.";return;}
- const t=performance.now(),h=await sha(target);let attempts=0,found=false;
- for(const c of candidates){attempts++;if(await sha(c)===h){found=true;break;}}
- const secs=(performance.now()-t)/1000,res=found?"Match found in lab list":"No match in lab list";
- $("simResult").innerHTML=escapeHTML(res)+"<br>Attempts: "+attempts+"<br>Elapsed: "+secs.toFixed(6)+" seconds";
- record("Dictionary demo",attempts,secs,res);
-}
-async function runBrute(){
- const target=$("target").value;
- if(!target){$("simResult").textContent="Enter a dummy target first.";return;}
- if(!/^[a-z]{1,2}$/.test(target)){
-  $("simResult").textContent="For this bounded demo, use a dummy target of one or two lowercase letters (a–z).";
-  return;
- }
- const t=performance.now(),h=await sha(target);let attempts=0,found=false;
- outer:for(let n=1;n<=2;n++){
-  for(let a=0;a<26**n;a++){
-   let x=a,c="";
-   for(let j=0;j<n;j++){c=String.fromCharCode(97+x%26)+c;x=Math.floor(x/26);}
-   attempts++;if(await sha(c)===h){found=true;break outer;}
+$("toggleTarget").addEventListener("click",()=>{
+  const input=$("target");
+  input.type=input.type==="password"?"text":"password";
+  $("toggleTarget").textContent=input.type==="password"?"Show":"Hide";
+});
+
+$("analyze").addEventListener("click",()=>{
+  const password=$("password").value;
+  if(!password){toast("Enter a dummy password first.");$("password").focus();return;}
+  let score=0;
+  if(password.length>=8)score++;
+  if(password.length>=12)score++;
+  if(/[a-z]/.test(password)&&/[A-Z]/.test(password))score++;
+  if(/\d/.test(password))score++;
+  if(/[^A-Za-z0-9]/.test(password))score++;
+  const levels=["Very weak","Weak","Fair","Good","Strong","Very strong"];
+  const level=levels[score];
+  const tips=[];
+  if(password.length<12)tips.push("Try 12 or more characters.");
+  if(!/[a-z]/.test(password)||!/[A-Z]/.test(password))tips.push("Mix uppercase and lowercase letters, or use a long passphrase.");
+  if(!/\d/.test(password))tips.push("Consider including numbers.");
+  if(!/[^A-Za-z0-9]/.test(password))tips.push("Consider adding a symbol if it suits your password strategy.");
+  if(/(.)\1{2,}/.test(password))tips.push("Avoid repeated characters.");
+  if(!tips.length)tips.push("Good signals for this basic checker. Use a unique password and a password manager.");
+  $("strengthResult").replaceChildren();
+  const heading=document.createElement("strong");heading.textContent=level+" · "+score+"/5 signals";
+  const detail=document.createElement("div");detail.className="muted";detail.textContent=tips.join(" ");
+  $("strengthResult").append(heading,detail);
+  $("strengthFill").style.width=(score/5*100)+"%";
+  record("Password strength","Length: "+password.length+" characters",level);
+});
+
+$("makeHash").addEventListener("click",async()=>{
+  const input=$("hashInput").value;
+  try{
+    if(!window.crypto?.subtle)throw new Error("Secure browser crypto is unavailable. Open this site over HTTPS.");
+    const bytes=new TextEncoder().encode(input);
+    const digest=await crypto.subtle.digest("SHA-256",bytes);
+    latestDigest=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
+    $("hashResult").replaceChildren();
+    const out=document.createElement("div");out.className="digest";out.textContent=latestDigest;
+    const note=document.createElement("div");note.className="muted";note.textContent="64 hexadecimal characters · 256-bit digest";
+    $("hashResult").append(out,note);
+    $("copyHash").disabled=false;
+    record("SHA-256 hash","Input length: "+input.length+" characters","Digest generated");
+  }catch(error){
+    $("hashResult").textContent=error.message||"Unable to generate digest.";
+    toast("Hash generation failed.");
   }
- }
- const secs=(performance.now()-t)/1000,res=found?"Match found in bounded search":"No match";
- $("simResult").innerHTML=escapeHTML(res)+"<br>Attempts: "+attempts+"<br>Elapsed: "+secs.toFixed(6)+" seconds";
- record("Bounded brute-force demo",attempts,secs,res);
+});
+$("copyHash").addEventListener("click",async()=>{
+  if(!latestDigest)return;
+  try{await navigator.clipboard.writeText(latestDigest);toast("Digest copied.");}
+  catch{toast("Copy is unavailable in this browser. Select the digest to copy.");}
+});
+
+const dictionary=[
+  "password","123456","qwerty","admin","letmein","hello123",
+  "welcome1","iloveyou","changeme","test123","cyberlab","green123"
+];
+function tinyBruteForce(target){
+  // Strict cap: lowercase letters and digits, length 1–2 only (36 + 1,296 candidates).
+  const alphabet="abcdefghijklmnopqrstuvwxyz0123456789";
+  let attempts=0;
+  for(let length=1;length<=2;length++){
+    const total=Math.pow(alphabet.length,length);
+    for(let n=0;n<total;n++){
+      let value="",num=n;
+      for(let i=0;i<length;i++){value=alphabet[num%alphabet.length]+value;num=Math.floor(num/alphabet.length);}
+      attempts++;
+      if(value===target)return {found:true,attempts,candidate:value};
+    }
+  }
+  return {found:false,attempts,candidate:""};
 }
-$("dictionary").onclick=runDictionary;
-$("brute").onclick=runBrute;
-function renderReport(){
- if(!records.length){$("reportTable").textContent="No experiments recorded yet.";return;}
- $("reportTable").innerHTML="<table><thead><tr><th>Experiment</th><th>Attempts</th><th>Seconds</th><th>Result</th></tr></thead><tbody>"+records.map(r=>"<tr><td>"+escapeHTML(r.kind)+"</td><td>"+r.attempts+"</td><td>"+r.seconds+"</td><td>"+escapeHTML(r.result)+"</td></tr>").join("")+"</tbody></table><p class='small'>"+records.length+" experiment(s) · Export CSV to keep a copy.</p>";
-}
-$("export").onclick=()=>{
- if(!records.length){alert("Run an experiment first.");return;}
- const rows=[["Date","Experiment","Attempts","ElapsedSeconds","Result"],...records.map(r=>[r.date,r.kind,r.attempts,r.seconds,r.result])];
- const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
- const a=document.createElement("a"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
- a.href=url;a.download="ghk-security-report.csv";a.click();URL.revokeObjectURL(url);
-};
-$("clear").onclick=()=>{if(confirm("Clear all report rows from this page?")){records.length=0;renderReport();}};
+$("runSimulation").addEventListener("click",()=>{
+  const target=$("target").value;
+  if(!target){toast("Enter a dummy target first.");$("target").focus();return;}
+  let result;
+  if($("mode").value==="dictionary"){
+    let attempts=0,found=false;
+    for(const candidate of dictionary){attempts++;if(candidate===target){found=true;break;}}
+    result={found,attempts,candidate:found?target:""};
+  }else{
+    result=tinyBruteForce(target);
+  }
+  const mode=$("mode").value==="dictionary"?"Fixed dictionary":"Tiny brute-force";
+  $("simResult").replaceChildren();
+  const heading=document.createElement("strong");
+  heading.textContent=result.found?"MATCH FOUND IN DEMO":"No match in the allowed candidates";
+  const detail=document.createElement("div");detail.className="muted";
+  detail.textContent=mode+" · "+result.attempts.toLocaleString()+" candidate checks"+(result.found?" · matched the dummy target":"");
+  $("simResult").append(heading,detail);
+  record("Guessing simulation",mode+"; target length: "+target.length,result.found?"Match found":"No match");
+});
+
+$("exportCsv").addEventListener("click",exportCSV);
+$("clearReports").addEventListener("click",()=>{
+  if(!reports.length){toast("There are no reports to clear.");return;}
+  if(confirm("Clear all experiment reports from this page session?")){
+    reports.length=0;renderReports();toast("Reports cleared.");
+  }
+});
+renderReports();
+
+(() => {
+  const pinInput = document.getElementById("labPin");
+  const startBtn = document.getElementById("labStart");
+  const resetBtn = document.getElementById("labReset");
+  const status = document.getElementById("labStatus");
+  const attemptsOut = document.getElementById("labAttempts");
+  const timeOut = document.getElementById("labTime");
+  const progress = document.getElementById("labProgress");
+  const result = document.getElementById("labResult");
+
+  if (!pinInput || !startBtn || !resetBtn) return;
+
+  // Fixed dummy PIN for simulation; never your device PIN.
+  const demoPin = "2580";
+  let runId = 0;
+
+  function reset() {
+    runId++;
+    status.textContent = "Ready to test";
+    attemptsOut.textContent = "0";
+    timeOut.textContent = "0.0";
+    progress.value = 0;
+    result.textContent = "Enter the demo PIN 2580 to test.";
+    startBtn.disabled = false;
+  }
+
+  resetBtn.addEventListener("click", reset);
+
+  startBtn.addEventListener("click", async () => {
+    const pin = pinInput.value.trim();
+
+    if (!/^\d{4,6}$/.test(pin)) {
+      result.textContent = "Enter a 4–6 digit dummy PIN.";
+      return;
+    }
+
+    const thisRun = ++runId;
+    const started = performance.now();
+    let attempts = 0;
+
+    startBtn.disabled = true;
+    status.textContent = "Checking simulated PIN…";
+    result.textContent = "Simulation running";
+    progress.value = 0;
+    attemptsOut.textContent = "0";
+
+    // Fixed demo workload only; no real device connection.
+    const totalSteps = 20;
+
+    for (let i = 1; i <= totalSteps; i++) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (thisRun !== runId) return;
+
+      attempts++;
+      attemptsOut.textContent = attempts;
+      progress.value = i / totalSteps * 100;
+      timeOut.textContent =
+        ((performance.now() - started) / 1000).toFixed(1);
+    }
+
+    if (thisRun !== runId) return;
+
+    if (pin === demoPin) {
+      status.textContent = "Demo PIN verified";
+      result.textContent =
+        "Simulation successful. The dummy PIN matches.";
+    } else {
+      status.textContent = "Demo PIN not verified";
+      result.textContent =
+        "Simulation complete. The entered PIN did not match.";
+    }
+
+    startBtn.disabled = false;
+  });
+
+  reset();
+})();
+
 </script>
 </body>
 </html>
-EOF
+
